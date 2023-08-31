@@ -1,0 +1,801 @@
+% !TeX TXS-program:compile = txs:///arara
+% arara: lualatex: {shell: no, synctex: no, interaction: batchmode}
+% arara: lualatex: {shell: no, synctex: no, interaction: batchmode} if found('log', '(undefined references|Please rerun|Rerun to get)')
+
+\documentclass[french,11pt,a4paper]{article}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\setmonofont[Scale=MatchLowercase]{Inconsolatazi4}
+\usepackage{highlightx}
+\usepackage{enumitem}
+\usepackage{codehigh}
+\usepackage{multicol}
+\usepackage{tabularray}
+\usepackage{lipsum}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{fontawesome5}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+%\rhead{\sffamily\small\affloetalab[Legende]}
+\lfoot{\sffamily\small [highlightx]}
+\cfoot{\sffamily\small - \thepage{} -}
+\rfoot{\hyperlink{matoc}{\small\faArrowAltCircleUp[regular]}}
+\usepackage{hologo}
+\providecommand\tikzlogo{Ti\textit{k}Z}
+\providecommand\TeXLive{\TeX{}Live\xspace}
+\providecommand\PSTricks{\textsf{PSTricks}\xspace}
+\let\pstricks\PSTricks
+\let\TikZ\tikzlogo
+
+\usepackage{hyperref}
+\urlstyle{same}
+\hypersetup{pdfborder=0 0 0}
+\usepackage[margin=1.5cm]{geometry}
+\setlength{\parindent}{0pt}
+\def\TPversion{0.1.0}
+\def\TPdate{30 août 2023}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,hooks}
+\sethlcolor{lightgray!25}
+\NewDocumentCommand\MontreCode{ m }{%
+	\hl{\vphantom{\texttt{pf}}\texttt{#1}}%
+}
+\usepackage{babel}
+
+\begin{document}
+
+\pagestyle{fancy}
+
+\thispagestyle{empty}
+
+\begin{center}
+	\begin{minipage}{0.88\linewidth}
+	\begin{tcolorbox}[colframe=yellow,colback=yellow!15]
+		\begin{center}
+			\begin{tabular}{c}
+				{\Huge \texttt{highlightx}}\\
+				\\
+				{\LARGE Commandes pour surligner formules ou paragraphes,} \\
+				\\
+				{\LARGE à l'aide des packages \MontreCode{soul} ou  \MontreCode{tikz}.} \\
+				\\
+				{\LARGE $\rhd$ Commandes [fr] ou [en] $\lhd$} \\
+				\\
+				{\small \texttt{Version \TPversion{} -- \TPdate}}
+		\end{tabular}
+		\end{center}
+	\end{tcolorbox}
+\end{minipage}
+\end{center}
+
+\begin{center}
+	\begin{tabular}{c}
+	\texttt{Cédric Pierquet}\\
+	{\ttfamily c pierquet -- at -- outlook . fr}\\
+	\texttt{\url{https://github.com/cpierquet/highlightx}}
+\end{tabular}
+\end{center}
+
+\hrule
+
+\vfill
+
+\begin{tcolorbox}[colframe=lightgray,colback=lightgray!5]
+Surligner une formule en ligne, avec un effet \textit{main levée}, comme $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.
+
+\vspace*{5mm}
+
+Surligner une formule en ligne, sans effet, comme $\SurlignerFormule*[Bord=red,Fond=teal!25]{f(x)=\displaystyle\int_0^4 x^2 + 1\,\text{d}x}$.
+\end{tcolorbox}
+
+\vspace*{5mm}
+
+\begin{tcolorbox}[colframe=lightgray,colback=lightgray!5]
+Et en mode hors ligne :
+
+\[ \SurlignerFormule[Fond=green!25,Bord=red]{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}<thick>. \]
+\end{tcolorbox}
+
+\vspace*{5mm}
+
+\begin{tcolorbox}[colframe=lightgray,colback=lightgray!5]
+Et on peut même mettre en forme un paragraphe (dans une \MontreCode{tcbox}), généré aléatoirement grâce au site \url{https://ipsum.one/} par exemple : \og \genhighlightpar{Enfin, comme le dernier coup de dix heures retentissait encore, il étendit la main et prit celle de Mme Rênal, qui la retira aussitôt. Julien, sans trop savoir ce qu’il faisait, la saisit de nouveau. Quoique bien ému lui-même, il fut frappé de la froideur glaciale de la main qu’il prenait ; il la serrait avec une force convulsive ; on fit un dernier effort pour la lui ôter, mais enfin cette main lui resta.} \fg
+\end{tcolorbox}
+
+\vspace*{5mm}
+
+Et dans un paragraphe classique, on peut mettre des effets, comme par exemple avec le texte suivant, généré aléatoirement grâce au site \url{https://ipsum.one/} par exemple : \og \SurlignerTexte[orange!25,draw=teal]{Une scie à eau se compose d’un hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie une pièce de bois. C’est une roue mise en mouvement par le ruisseau qui fait aller ce double mécanisme ; celui de la scie qui monte et descend, et celui qui pousse doucement la pièce de bois vers la scie, qui la débite en planches.} \fg
+
+\vfill~
+
+\pagebreak
+
+\phantomsection
+
+\hypertarget{matoc}{}
+
+\tableofcontents
+
+\vspace*{5mm}
+
+\hrule
+
+\vspace*{5mm}
+
+\section{Le package highlightx}
+
+\subsection{Solutions existantes}
+
+Le package \MontreCode{soul} permet de surligner du texte, de manière efficace, mais avec des formules mathématiques le surlignage n'est pas forcément optimal.
+
+Il est également possible d'utiliser \MontreCode{fcolorbox} pour des formules mathématiques.
+
+\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+On peut surligner \hl{avec la commande \texttt{hl} du package \texttt{soul}}.\\
+Avec une formule, du style \hl{$\int_0^4 x^2\,\text{d}x$}, on constate un léger décalage.\\\\
+Aucun souci avec \texttt{hl} pour un paragraphe : \og \hl{Une scie à eau se compose d’un 
+hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
+gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
+scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
+une pièce de bois.} \fg.\\\\
+Et maintenant avec \texttt{fcolorbox} : \colorbox{lightgray!25}{$\int_0^4 x^2\,\text{d}x$}.
+\end{demohigh}
+
+\pagebreak
+
+\subsection{Possibilités et limitations}
+
+L'idée du package \MontreCode{highlightx} est de proposer des commandes, simples et basiques, pour \textit{surligner} :
+
+\begin{itemize}
+	\item du texte simple ou multi-lignes (paragraphes) ;
+	\item des formules en mode math en ligne ou hors-ligne (grâce à \TikZ) ;
+	\item avec un effet de bordure à \textit{main levée} (sauf pour un paragraphe dans une \MontreCode{tcbox}).
+\end{itemize}
+
+{\small\faBomb}~Pour le moment le surlignement avec effet en mode paragraphe n'est pas compatible avec des environnements (comme \MontreCode{tcolorbox}), donc dans ce cas il n'y aura pas d'effet possible.
+
+\medskip
+
+{\small\faAngellist}~Le code permettant de surligner un paragraphe avec effet vient d'une solution proposée par l'internaute \MontreCode{gusbrs}, dans un fil de discussion du site \MontreCode{tex.stackexchange} :
+
+\smallskip
+
+\hfill\url{https://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex}\hfill~
+
+\subsection{Chargement}
+
+Le package se charge dans le préambule, via \MontreCode{\textbackslash usepackage\{highlightx\}}.
+
+Les seuls packages chargés sont :
+
+\begin{itemize}
+	\item \MontreCode{soul}, \MontreCode{atbegshi}, \MontreCode{etoolbox} ;
+	\item \MontreCode{tikz} avec les librairies \MontreCode{tikzmark,calc,decorations.pathmorphing} ;
+	\item \MontreCode{xstring} et \MontreCode{simplekv}.
+\end{itemize}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+\usepackage{highlightx}
+\end{codehigh}
+
+{\small\faAngleDoubleRight}~\MontreCode{highlightx} est compatible avec les compilations usuelles en \textsf{latex}, \textsf{pdflatex}, \textsf{lualatex} ou \textsf{xelatex}.
+
+\medskip
+
+{\small\faBomb}~Une double compilation est souvent nécessaire afin de placer correctement les effets de surlignage !
+
+\subsection{Commandes disponibles}
+
+Les commandes proposées par le package \MontreCode{highlightx} sont :
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Commande pour surligner une formule (mode math)
+\SurlignerFormule
+
+%Commande pour surligner du texte
+\SurlignerTexte
+
+%Commande pour surligner du texte de manière basique, sans effet
+\genhighlightpar
+\end{codehigh}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+Par exemple $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+Ou bien :
+\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
+
+Et : \og \SurlignerTexte{Une scie à eau se compose d’un 
+hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
+gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
+scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
+une pièce de bois.} \fg.
+\end{codehigh}
+
+Par exemple $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+Ou bien :
+\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
+
+Et : \og \SurlignerTexte{Une scie à eau se compose d’un 
+hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
+gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
+scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
+une pièce de bois.} \fg.
+
+\pagebreak
+
+\section{Les commandes}
+
+\subsection{Surligner une formule}
+
+La commande dédiée à la mise en évidence d'une formule mathématique est \MontreCode{\textbackslash SurlignerFormule} :
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Commande pour surligner une formule (mode math)
+\SurlignerFormule(*)[Clés]{Formule}<options tikz>
+\end{codehigh}
+
+Concernant cette commande :
+
+\begin{itemize}
+	\item la version étoilée désactive l'effet \textit{main levée} ;
+	\item les clés disponibles sont :
+	\begin{itemize}
+		\item \MontreCode{Fond} pour la couleur de fond (\MontreCode{yellow!35} par défaut) ;
+		\item \MontreCode{Bord} pour une éventuelle bordure, \MontreCode{none} ou \MontreCode{couleur} (\MontreCode{none} par défaut) ;
+		\item \MontreCode{Texte} pour une couleur de texte (\MontreCode{black} par défaut) ;
+		\item \MontreCode{Offset} pour \textit{élargir} le surlignage, sous la forme \MontreCode{Offset} ou \MontreCode{OffsetH/OffsetV} (\MontreCode{1pt/2pt} par défaut) ;
+	\end{itemize}
+	\item la formule est insérée dans un groupe \MontreCode{\textbackslash ensuremath} ;
+	\item les \textit{options tikz} sont optionnelles.
+\end{itemize}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+$\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\SurlignerFormule*{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\SurlignerFormule[Fond=teal!35]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\SurlignerFormule[Fond=teal!35,Bord=red]{f(x)=\displaystyle\frac{1}{1+x}}<thick>$.\\
+$\SurlignerFormule[Offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$\\
+$\SurlignerFormule*[Texte=red]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+\end{codehigh}
+
+$\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\SurlignerFormule*{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\SurlignerFormule[Fond=teal!35]{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\SurlignerFormule[Fond=teal!35,Bord=red]{f(x)=\displaystyle\frac{1}{1+x}}<thick>$
+\qquad
+$\SurlignerFormule[Offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\SurlignerFormule*[Texte=red]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+
+\subsection{Surligner du texte, y compris multilignes}
+
+La commande dédiée à la mise en évidence d'une formule mathématique est \MontreCode{\textbackslash SurlignerTexte} :
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Commande pour surligner du texte
+\SurlignerTexte[options tikz]{texte}
+\end{codehigh}
+
+Concernant cette commande, pour laquelle le fonctionnement (interne) est très différent du mode \textit{math} :
+
+\begin{itemize}
+	\item les options tikz permettent de spécifier la couleur de fond et l'éventuelle couleur de bordure, grâce à \MontreCode{[couleurfond,draw=couleurbord]}.
+\end{itemize}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Paragraphes venant du site https://ipsum.one/
+
+Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
+de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
+une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
+infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
+me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
+cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
+
+Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
+du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
+devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
+l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
+toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
+une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+\end{codehigh}
+
+Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
+de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
+une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
+infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
+me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
+cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
+
+\medskip
+
+Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
+du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
+devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
+l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
+toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
+une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+
+\subsection{Surlignement \og classique \fg, au cas où\ldots}
+
+Au cas où le surlignement multilignes précédent ne fonctionne pas (dans un environnement spécifique par exemple\ldots), il est possible d'utiliser une commande \textit{générique}, qui utilise uniquement le package \MontreCode{soul} (donc pas d'effet !), qui est \MontreCode{\textbackslash genhighlightpar}.
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Commande générique pour surligner du texte
+\genhighlightpar[couleur]{texte}
+\end{codehigh}
+
+Concernant cette commande, le premier argument (optionnel) est la couleur de fond, et le second argument (obligatoire) est le texte à mettre en évidence.
+
+\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+Un paragraphe : \og \genhighlightpar[orange!35]{Pour arriver à la considération publique 
+à Verrières, l’essentiel est de ne pas adopter, tout en bâtissant beaucoup de murs, quelque 
+plan apporté d’Italie par ces maçons, qui au printemps traversent les gorges du Jura pour 
+gagner Paris. Une telle innovation vaudrait à l’imprudent bâtisseur une éternelle réputation 
+de mauvaise tête, et il serait à jamais perdu auprès des gens sages et modérés qui distribuent 
+la considération en Franche-Comté.} \fg.
+\end{demohigh}
+
+\pagebreak
+
+\section{English commands}
+
+\subsection{Introduction}
+
+There's also english versions of the commands :
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Hightlight formula (math mode)
+\HighlightFormula
+
+%Highlight text
+\HighlightText
+
+%Basic highlight text, without effect
+\genhighlightpar
+\end{codehigh}
+
+\subsection{Highlight formula}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Hightlight formula (math mode)
+\HighlightFormula(*)[keys]{formula}<tikz options>
+\end{codehigh}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+$\HighlightFormula{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\HighlightFormula*{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\HighlightFormula[bg=teal!35]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+$\HighlightFormula[bg=teal!35,border=red]{f(x)=\displaystyle\frac{1}{1+x}}<thick>$.\\
+$\HighlightFormula[offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$\\
+$\HighlightFormula*[text=red]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+\end{codehigh}
+
+$\HighlightFormula{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\HighlightFormula*{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\HighlightFormula[bg=teal!35]{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\HighlightFormula[bg=teal!35,border=red]{f(x)=\displaystyle\frac{1}{1+x}}<thick>$
+\qquad
+$\HighlightFormula[offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$
+\qquad
+$\HighlightFormula*[text=red]{f(x)=\displaystyle\frac{1}{1+x}}$.
+
+\subsection{Highlight text}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Highlight text, with effect
+\HighlightText[tikz options]{text}
+\end{codehigh}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%Paragraphs from https://ipsum.one/
+
+A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
+on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
+the valves open, the steam from the boilers rushes along the conducting tubes into the two 
+cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
+If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
+with one finge}.
+
+A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
+my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
+the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin; 
+an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
+making expeditions from one end to the other, knocking the tables and chairs with loud crashes; 
+doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood;
+bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
+about on the pantry floors}.
+\end{codehigh}
+
+A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
+on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
+the valves open, the steam from the boilers rushes along the conducting tubes into the two 
+cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
+If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
+with one finge}.
+
+\medskip
+
+A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
+my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
+the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin ;
+an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
+making expeditions from one end to the other, knocking the tables and chairs with loud crashes ;
+doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood ;
+bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
+about on the pantry floors}.
+
+\subsection{Generic highlight, without effect}
+
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%generic command, without effect
+\genhighlightpar[color]{text}
+\end{codehigh}
+
+\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+Un paragraph : \genhighlightpar[violet!35]{This steam-ship is indeed a masterpiece of naval 
+construction ; more than a vessel, it is a floating city, part of the country, detached from 
+English soil, which after having crossed the sea, unites itself to the American Continent.
+I pictured to myself this enormous bulk borne on the waves, her defiant struggle with the wind, 
+her boldness before the powerless sea, her indifference to the billows, her stability in the 
+midst of that element which tosses 'Warriors' and 'Solferinos' like ship's boats.}.
+\end{demohigh}
+
+
+%Le style global des boîtes est défini par :
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\tcbset{baseboite/.style={
+%    enhanced,sharp corners=uphill,boxrule=\eptraitboite,%
+%    before skip=0.5em,after skip=0.5em,%
+%    colback=white,top=4mm,%
+%    left={\margeboite-\margeinttitreboite-\eptraitboite},%
+%    right={\margeboite-\margeinttitreboite-\eptraitboite}
+%}%
+%}
+%\end{codehigh}
+%
+%À noter que le \MontreCode{\textbackslash margeboite-\textbackslash margeinttitreboite-\textbackslash eptraitboite} vient :
+%
+%\begin{itemize}
+%	\item des \MontreCode{\textbackslash margeinttitreboite} du paramètre \MontreCode{inner sep} du nœud Ti\textit{k}Z ;
+%	\item des \MontreCode{\textbackslash eptraitboite} du paramètre \MontreCode{boxrule} de la boîte \textit{titre}.
+%\end{itemize}
+%
+%\subsection{Paramétrage simple de la boîte}
+%
+%Il est possible de rajouter ou modifier quelques éléments de chaque boîte (les clés suivantes sont cumulables) :
+%
+%\begin{itemize}
+%	\item un \textsf{sous-titre} (couleur \textsf{rouge foncé}) peut être ajouté (en haut à droite de la boîte), via la clé \MontreCode{[SousTitre=...]} ;
+%	\item le label peut être modifié :
+%	\begin{itemize}
+%		\item le compteur peut être désactivé, grâce à la clé \MontreCode{[Compteur=false]} ;
+%		\item la clé \MontreCode{[Pluriel]} force le pluriel du label ;
+%		\item un complément peut être rajouté entre le label et le compteur grâce à la clé \MontreCode{[ModifLabel=...]} ;
+%		\item un complément peut être rajouté après le compteur grâce à la clé \MontreCode{[ComplementTitre=...]} ;
+%	\end{itemize}
+%	\item une petite image (type \textit{filigrane}) peut être rajoutée (de hauteur 24pt et pivotée de 45° dans le sens horaire par défaut), dans le coin \textit{bas-droite} de la boîte :
+%	\begin{itemize}
+%		\item en spécifiant l'image grâce à la clé \MontreCode{[Logo=...]} ;
+%		\item en spécifiant hauteur/rotation/opacité grâce aux clés \MontreCode{[HauteurLogo=...]} , \MontreCode{[RotationLogo=...]} et \MontreCode{[OpaciteLogo=...]}.
+%	\end{itemize}
+%\end{itemize}
+%
+%Des options spécifiques \MontreCode{tcolorbox} peuvent être passées en option à l'environnement, elles sont à mettre entre \MontreCode{<...>} avant le corps de l'environnement.
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\setcounter{CompteurBoiteDemo}{0}
+%\begin{BoiteDeDemo}[Compteur=false]
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[Pluriel]<width=0.5\linewidth>
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[SousTitre={Un petit sous-titre}]
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[ComplementTitre={ - Un complément de titre}]%noter l'espace ;-)
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[ModifLabel={ super important}]%noter l'espace ;-)
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[Logo={example-image}]
+%\lipsum[1][3-4]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[Logo={example-image},HauteurLogo=5mm,RotationLogo=10]
+%\lipsum[1][3-4]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\pagebreak
+%
+%Et en \textit{cumulant} des clés de personnalisation on peut obtenir :
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[%
+%    ModifLabel={s super importants},ComplementTitre={ (vraiment super importants)},%
+%    SousTitre={- Source -},Compteur=false,Logo={example-image-a},%
+%    HauteurLogo=1cm,RotationLogo=15,OpaciteLogo=1
+%    ]
+%\lipsum[2][1-4]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\subsection{Personnalisation \textit{intermédiaire}}
+%
+%Il est possible de paramétrer \textit{facilement} certaines options, via la commande \MontreCode{\textbackslash ParamBoites[...]} :
+%
+%\begin{itemize}
+%	\item la police du label grâce à la clé \MontreCode{[PoliceTitre=...]} (\verb*|\bfseries\sffamily| par défaut) ;
+%	\item la police du sous-titre grâce à la clé \MontreCode{[PoliceSousTitre=...]} (\verb*|\small\bfseries\sffamily| par défaut) ;
+%	\item la couleur de base du sous-titre grâce à la clé \MontreCode{[CouleurSousTitre=...]} (\verb*|red| par défaut) ;
+%	\item les marges gauche et droite grâce à la clé \MontreCode{[Marge=...]} (\verb*|4mm| par défaut) ;
+%	\item l'épaisseur des bordures grâce à la clé \MontreCode{[EpaisseurBordure=...]} (\verb*|1.25pt| par défaut) ;
+%	\item la marge spécifique pour la boîte \textit{titre} grâce à clé \MontreCode{[MargeTitre=...]} (\verb*|3pt| par défaut).
+%\end{itemize}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\ParamBoites[%
+%    Marge=2cm,MargeTitre=2mm,%
+%    PoliceTitre=\large\bfseries\ttfamily,%
+%    PoliceSousTitre=\scriptsize\bfseries\sffamily,%
+%    CouleurSousTitre=orange]
+%\end{codehigh}
+%
+%\ParamBoites[Marge=2cm,MargeTitre=2mm,PoliceTitre=\large\bfseries\ttfamily,PoliceSousTitre=\scriptsize\bfseries\sffamily,CouleurSousTitre=orange]
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\begin{BoiteDeDemo}[SousTitre={- Un petit sous-titre -}]
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%On peut revenir aux paramètres par défaut grâce à la commande \MontreCode{\textbackslash ParamBoites} (sans argument).
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\ParamBoites
+%\begin{BoiteDeDemo}[SousTitre={- Un petit sous-titre -}]
+%\lipsum[1][1-2]
+%\end{BoiteDeDemo}
+%\end{demohigh}
+%
+%\pagebreak
+%
+%\section{Utilisation avancée}
+%
+%\subsection{Styles spécifiques}
+%
+%Il est possible quand même de modifier \textit{en profondeur} les boîtes créées, en redéfinissant les commandes suivantes via \verb*|\RenewDocumentCommand| :
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\NewDocumentCommand\TitreBoite{ m m m m }{%
+%    %1=couleur
+%    %2=icone
+%    %3=nom
+%    %4=compteur
+%    % \BoxModifLabel = texte entre label et compteur
+%    % \BoxCpltTitle = Texte après le compteur
+%    \node[inner sep=\margeinttitreboite,rounded corners=3pt,draw=#1,line width=\eptraitboite,%
+%      rectangle,fill=#1!5!white,anchor=west,xshift=\margeboite,text=black,%
+%      font=\policetitreboite]%
+%      at (frame.north west)
+%      {%
+%      \,\IfStrEq{#2}{}{}{{\small#2}~}\vphantom{Ppé}%
+%      \ifboolKV[Boites]{Pluriel}{\StrBehind{#3}{/}}{\StrBefore{#3}{/}}%
+%      \IfStrEq{\BoxModifLabel}{}{}{\BoxModifLabel}\ifboolKV[Boites]{Compteur}{~#4}{}%
+%      \IfStrEq{\BoxCpltTitle}{}{}{\BoxCpltTitle}\,%
+%      } ;
+%}
+%\end{codehigh}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\NewDocumentCommand\SousTitreBoite{ }{%\BoxSubTitle = Sous-titre
+%    \node[fill=white,anchor=east,xshift=-\margeboite,text=red!75!black,%
+%    font=\policesoustitreboite] at (frame.north east) %
+%    {\vphantom{Ppé}\BoxSubTitle} ;
+%}
+%\end{codehigh}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\NewDocumentCommand\LogoCoinDroit{ }{%
+%    \begin{tcbclipinterior}%
+%        \node[opacity=\BoxOpaciteLogo,rotate=-\BoxRotationLogo]%
+%        at ($(interior.south east)+(-10pt,10pt)$) %
+%        {\includegraphics[height=\BoxHauteurLogo]{\BoxLogo}};%
+%    \end{tcbclipinterior}%
+%}
+%\end{codehigh}
+%
+%\pagebreak
+%
+%\subsection{Exemple de personnalisations avancées}
+%
+%Par exemple, on peut modifier globalement le comportement de la boîte :
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\tcbset{baseboite/.style={
+%    enhanced,boxrule=0.75pt,%
+%    center,width=0.75\linewidth,%
+%    before skip=1em,after skip=1em,%
+%    colback=white,top=4mm,left=1mm,right=1mm
+%    }%
+%}
+%\RenewDocumentCommand\TitreBoite{ m m m m }{%
+%    \node[inner sep=2pt,draw=#1,line width=0.75pt,rounded corners,%
+%    rectangle,fill=white,anchor=center,xshift=-1cm,text=black,%
+%    font=\policetitreboite]%
+%    at (frame.north)
+%    {%
+%    ~#2 #3\ifboolKV[Boites]{Compteur}{~#4}{}\IfStrEq{\BoxCpltTitle}{}{}{\BoxCpltTitle}~
+%    } ;
+%}
+%\RenewDocumentCommand\SousTitreBoite{ }{%
+%    \node[fill=white,anchor=center,%
+%    font=\policesoustitreboite] at (frame.south) {\vphantom{pP}\BoxSubTitle} ;
+%}
+%\ParamBoites[PoliceTitre=\bfseries,PoliceSousTitre=\small\sffamily]
+%\CreationBoite{BoxDef}{CompteurDefi}{\faAddressBook}{Définition}
+%\CreationBoite[lime]{BoxProp}{CompteurProp}{\faAmbulance}{Propriété}
+%\end{codehigh}
+%
+%\tcbset{baseboite/.style={
+%enhanced,boxrule=0.75pt,%
+%center,width=0.75\linewidth,%
+%before skip=1em,after skip=1em,%
+%colback=white,top=4mm,left=1mm,right=1mm
+%}%
+%}
+%
+%\RenewDocumentCommand\TitreBoite{ m m m m }{%
+%\node[inner sep=2pt,draw=#1,line width=0.75pt,rounded corners,%
+%rectangle,fill=white,anchor=center,text=black,%
+%font=\policetitreboite]%
+%at (frame.north)
+%{%
+%~#2 #3\ifboolKV[Boites]{Compteur}{~#4}{}\IfStrEq{\BoxCpltTitle}{}{}{\BoxCpltTitle}~
+%} ;
+%}
+%
+%\RenewDocumentCommand\SousTitreBoite{ }{%
+%\node[fill=white,anchor=center,%
+%font=\policesoustitreboite] at (frame.south) %
+%{\vphantom{pP}\BoxSubTitle} ;
+%}
+%
+%\ParamBoites[PoliceTitre=\bfseries,PoliceSousTitre=\small\sffamily]
+%
+%\CreationBoite{BoxDef}{CompteurDefi}{\faAddressBook}{Définition}
+%\CreationBoite[lime]{BoxProp}{CompteurProp}{\faAmbulance}{Propriété}
+%
+%\begin{demohigh}
+%On va montrer en situation :
+%
+%\begin{BoxDef}[ComplementTitre={ (importante)},SousTitre={- Fin -}]
+%\lipsum[1][1-2]
+%\end{BoxDef}
+%
+%\begin{BoxProp}[ComplementTitre={ (très importante)},Compteur=false]
+%\lipsum[1][3-4]
+%\end{BoxProp}
+%
+%Voili voilà !
+%\end{demohigh}
+%
+%\pagebreak
+%
+%\subsection{Galerie pour des boîtes à destination de cours}
+%
+%Pour les exemples suivants, les paramètres et styles ont été remis par défaut.
+%
+%Toute couleur (\MontreCode{xcolor} n'est pas chargé avec des options spécifiques) peut être utilisée pour créer une boîte.
+%
+%\tcbset{baseboite/.style={
+%	enhanced,sharp corners=uphill,boxrule=1.25pt,%
+%	before skip=0.5em,after skip=0.5em,%
+%	colback=white,top=4mm,left={\margeboite-4.25pt},right={\margeboite-4.25pt}
+%}%
+%}
+%
+%\RenewDocumentCommand\TitreBoite{ m m m m }{%
+%	%1=couleur
+%	%2=icone
+%	%3=nom
+%	%4=compteur
+%	% \BoxModifLabel = texte entre label et compteur
+%	% \BoxCpltTitle = Texte après le compteur
+%	\node[inner sep=3pt,rounded corners=3pt,draw=#1,line width=1.25pt,%
+%	rectangle,fill=#1!5!white,anchor=west,xshift=\margeboite,text=black,%
+%	font=\policetitreboite]%
+%	at (frame.north west)
+%	{%
+%		\,\IfStrEq{#2}{}{}{{\small#2}~}\vphantom{Ppé}%
+%		\ifboolKV[Boites]{Pluriel}{\StrBehind{#3}{/}}{\StrBefore{#3}{/}}%
+%		\IfStrEq{\BoxModifLabel}{}{}{\BoxModifLabel}\ifboolKV[Boites]{Compteur}{~#4}{}%
+%		\IfStrEq{\BoxCpltTitle}{}{}{\BoxCpltTitle}\,%
+%	} ;
+%}
+%
+%\RenewDocumentCommand\SousTitreBoite{ }{%\BoxSubTitle = Sous-titre
+%	\node[fill=white,anchor=east,xshift=-\margeboite,text=red!75!black,%
+%	font=\policesoustitreboite] at (frame.north east) %
+%	{\vphantom{Ppé}\BoxSubTitle} ;
+%}
+%
+%\RenewDocumentCommand\LogoCoinDroit{ }{%
+%	\begin{tcbclipinterior}%
+%		\node[opacity=\BoxOpaciteLogo,rotate=-\BoxRotationLogo]%
+%		at ($(interior.south east)+(-10pt,10pt)$) %
+%		{\includegraphics[height=\BoxHauteurLogo]{\BoxLogo}};%
+%	\end{tcbclipinterior}%
+%}
+%
+%\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%\ParamBoites %on remet à 0 les paramètres
+%\CreationBoite[teal]{EnvDefi}{CptDefi}{\faIcon[regular]{comment-dots}}{Définition/Définitions}
+%\CreationBoite[yellow]{EnvHumour}{CptHumour}{\faIcon[regular]{laugh-wink}}{Humour/Humours}
+%\CreationBoite[violet]{EnvProp}{CptProp}{\faCog}{Propriété/Propriétés}
+%\CreationBoite[red]{EnvThm}{CptThm}{\faBullhorn}{Théorème/Théorèmes}
+%\CreationBoite[blue]{EnvRmq}{CptRmq}{\faHandPointRight[regular]}{Remarque/Remarques}
+%
+%\begin{EnvDefi}
+%\lipsum[1][3-4]
+%\end{EnvDefi}
+%
+%\begin{EnvHumour}
+%\lipsum[2][3-4]
+%\end{EnvHumour}
+%
+%\begin{EnvProp}
+%\lipsum[2][3-4]
+%\end{EnvProp}
+%
+%\begin{EnvThm}
+%\lipsum[2][3-4]
+%\end{EnvThm}
+%
+%\begin{EnvRmq}[Pluriel,Logo={example-image-1x1},SousTitre={ - Fondamentales -}]
+%\lipsum[3][1-7]
+%\end{EnvRmq}
+%\end{demohigh}
+%
+%\pagebreak
+%
+%\section{Historique}
+%
+%\verb|v0.1.0|~:~~~~Version initiale
+%
+%\vspace*{15mm}
+%
+%\pagebreak
+
+\end{document}
