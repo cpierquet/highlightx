@@ -1,17 +1,15 @@
 % Author     : C. Pierquet
 % licence    : Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
-% source     : https://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{highlightx}[2023/08/30 0.1.0 Macros pour surligner du texte, meme en mode paragraphe]
+\ProvidesPackage{highlightx}[2023/09/01 0.1.1 Macros pour surligner du texte, meme en mode paragraphe]
 
 %====HISTORIQUE
+% v 0.1.1	Suppression code paragraphe avec effet
 % v 0.1.0	Version initiale [fr] et [en]
 
 %====BASE
 \RequirePackage{soul}
-\RequirePackage{atbegshi}
-\RequirePackage{etoolbox}
 \RequirePackage{tikz}
 \RequirePackage{xstring}
 \RequirePackage{simplekv}
@@ -19,6 +17,9 @@
 \colorlet{hlcolback}{yellow!35}
 
 %====COMMANDES POUR FORMULES
+\tikzstyle{encadreformule}=[decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
+\tikzstyle{borderformula}=[decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
+
 \defKV[surlignformule]{%
 	Fond=\def\surlignformulefond{#1},%
 	Bord=\def\surlignformulebord{#1},%
@@ -49,7 +50,7 @@
 				\fill[\surlignformulefond,draw=\surlignformulebord,#4] ([xshift=-\surlignformuleoffsetH,yshift=-\surlignformuleoffsetV]formule.south west) rectangle ([xshift=\surlignformuleoffsetH,yshift=\surlignformuleoffsetV]formule.north east) node[text=\surlignformuletexte,midway] {\ensuremath{#3}} ;
 			}%
 			{%
-				\fill[\surlignformulefond,draw=\surlignformulebord,decorate,decoration = {random steps, amplitude=0.5pt, segment length=1em},#4] ([xshift=-\surlignformuleoffsetH,yshift=-\surlignformuleoffsetV]formule.south west) rectangle ([xshift=\surlignformuleoffsetH,yshift=\surlignformuleoffsetV]formule.north east) node[text=\surlignformuletexte,midway] {\ensuremath{#3}} ;
+				\fill[\surlignformulefond,draw=\surlignformulebord,encadreformule,#4] ([xshift=-\surlignformuleoffsetH,yshift=-\surlignformuleoffsetV]formule.south west) rectangle ([xshift=\surlignformuleoffsetH,yshift=\surlignformuleoffsetV]formule.north east) node[text=\surlignformuletexte,midway] {\ensuremath{#3}} ;
 			}
 	\end{tikzpicture}%
 }
@@ -81,245 +82,17 @@
 	\begin{tikzpicture}[remember picture,overlay]
 		\IfBooleanTF{#1}%
 			{%
-				\fill[\hlformulabg,draw=\hlformulaborder,#4] ([xshift=-\hlformulaoffset,yshift=-\hlformulaoffset]formula.south west) rectangle ([xshift=\hlformulaoffsetH,yshift=\hlformulaoffsetV]formula.north east) node[text=\surlignformulatext,midway] {\ensuremath{#3}} ;
+				\fill[\hlformulabg,draw=\hlformulaborder,#4] ([xshift=-\hlformulaoffsetH,yshift=-\hlformulaoffsetV]formula.south west) rectangle ([xshift=\hlformulaoffsetH,yshift=\hlformulaoffsetV]formula.north east) node[text=\surlignformulatext,midway] {\ensuremath{#3}} ;
 			}%
 			{%
-				\fill[\hlformulabg,draw=\hlformulaborder,decorate,decoration = {random steps, amplitude=0.5pt, segment length=1em},#4] ([xshift=-\hlformulaoffsetH,yshift=-\hlformulaoffsetV]formula.south west) rectangle ([xshift=\hlformulaoffsetH,yshift=\hlformulaoffsetV]formula.north east) node[text=\surlignformulatext,midway] {\ensuremath{#3}} ;
+				\fill[\hlformulabg,draw=\hlformulaborder,borderformula,#4] ([xshift=-\hlformulaoffsetH,yshift=-\hlformulaoffsetV]formula.south west) rectangle ([xshift=\hlformulaoffsetH,yshift=\hlformulaoffsetV]formula.north east) node[text=\surlignformulatext,midway] {\ensuremath{#3}} ;
 			}
 	\end{tikzpicture}%
 }
 
-%====COMMANDES POUR PARAGRAPHES SIMPLES (tcbox par exemple)
+%====COMMANDES POUR PARAGRAPHES SIMPLES (sans effet, pour du tcbox par exemple)
 \NewDocumentCommand\genhighlightpar{ O{hlcolback} m }{%
 	{\sethlcolor{#1}\hl{#2}}%
 }
-
-%====COMPTEURS ET VARIABLES
-\newlength{\txtdec@depth}
-\setlength{\txtdec@depth}{.5ex}
-\newlength{\txtdec@height}
-\setlength{\txtdec@height}{\f@size pt} % sensible default
-\newcounter{txtdec@hyphmark}
-\newcounter{txtdec@decormark}
-\setcounter{txtdec@decormark}{1}
-\newcounter{txtdec@hyphdraw}
-\setcounter{txtdec@hyphdraw}{1}
-\newcounter{txtdec@decordraw}
-\setcounter{txtdec@decordraw}{1}
-\newcounter{txtdec@thenextpage}
-\newtoggle{txtdec@unfinisheddecor}
-\newtoggle{txtdec@stayonpage}
-\newtoggle{txtdec@stayondecor}
-\newtoggle{txtdec@stayonline}
-
-%====COMMANDES AUXILIAIRES
-% from https://tex.stackexchange.com/a/33765/105447
-\newcommand{\gettikzxy}[3]{%
-	\tikz@scan@one@point\pgfutil@firstofone#1\relax
-	\edef#2{\the\pgf@x}%
-	\edef#3{\the\pgf@y}%
-}
-
-% the drawing macros
-\tikzset{%
-	defaultdecor/.style={%
-		fill=hlcolback,
-		decoration = {random steps, amplitude=0.5pt, segment length=1em},
-		outer sep = -15pt,
-		inner sep = 0pt,
-		decorate}%
-}
-
-\newcommand{\txtdec@draw@all}{%
-	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
-	\path[defaultdecor, thisdecor]
-	($(\Xbegin,\Ybegin)+(0,-\txtdec@depth)$) rectangle
-	($(\Xend,\Yend)+(0,\txtdec@height-\txtdec@depth)$) ;
-}
-
-\newcommand{\txtdec@draw@begin}{%
-	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
-	\path[defaultdecor, thisdecor]
-	($(\Xbegin,\Ybegin)+(0,-\txtdec@depth)$) rectangle
-	($(\Xlineend,\Ylineend)+(0,\txtdec@height-\txtdec@depth)$) ;
-}
-
-\newcommand{\txtdec@draw@middle}{%
-	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
-	\path[defaultdecor, thisdecor]
-	($(\Xlinebegin,\Ylinebegin)+(0,-\txtdec@depth)$) rectangle
-	($(\Xlineend,\Ylineend)+(0,\txtdec@height-\txtdec@depth)$) ;
-}
-
-\newcommand{\txtdec@draw@end}{%
-	\tikzset{thisdecor/.style/.expanded=\csuse{decor@tikz@style@\thetxtdec@decordraw}}%
-	\path[defaultdecor, thisdecor]
-	($(\Xlinebegin,\Ylinebegin)+(0,-\txtdec@depth)$) rectangle
-	($(\Xend,\Yend)+(0,\txtdec@height-\txtdec@depth)$) ;
-}
-
-% using soul to set tikzmarks
-\def\SOUL@tdleaders{%
-	\stepcounter{txtdec@hyphmark}%
-	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
-	\leaders\hrule\@depth\z@\@height\z@\relax
-}
-\def\SOUL@tdunderline#1{{%
-		\setbox\z@\hbox{#1}%
-		\dimen@=\wd\z@
-		\dimen@i=\SOUL@uloverlap
-		\advance\dimen@2\dimen@i
-		\rlap{%
-			\null
-			\kern-\dimen@i
-			\SOUL@ulcolor{\SOUL@tdleaders\hskip\dimen@}%
-			\hskip\dimen@
-		}%
-		\unhcopy\z@
-}}
-\def\SOUL@tdpreamble{%
-	\spaceskip\SOUL@spaceskip
-	\setcounter{txtdec@hyphmark}{0}%
-	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.begin}%
-}
-\def\SOUL@tdeverysyllable{%
-	\SOUL@tdunderline{%
-		\the\SOUL@syllable
-		\SOUL@setkern\SOUL@charkern
-	}%
-	\stepcounter{txtdec@hyphmark}%
-	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
-}
-\def\SOUL@tdeveryhyphen{%
-	\discretionary{%
-		\unkern
-		\SOUL@tdunderline{%
-			\SOUL@setkern\SOUL@hyphkern
-			\SOUL@sethyphenchar
-		}%
-		\stepcounter{txtdec@hyphmark}%
-		\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
-	}{}{}%
-}
-\def\SOUL@tdeveryexhyphen#1{%
-	\SOUL@setkern\SOUL@hyphkern
-	\SOUL@tdunderline{#1}%
-	\stepcounter{txtdec@hyphmark}%
-	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}%
-	\discretionary{}{}{%
-		\SOUL@setkern\SOUL@charkern
-	}%
-}
-\def\SOUL@tdpostamble{%
-	% create an extra mark, vertically displaced, to create an exit condition for the last line
-	\stepcounter{txtdec@hyphmark}%
-	\raisebox{-5pt}{\tikzmark{p\thepage.d\arabic{txtdec@decormark}.\arabic{txtdec@hyphmark}}}%
-	\tikzmark{p\thepage.d\arabic{txtdec@decormark}.end}%
-	\stepcounter{txtdec@decormark}%
-}
-\def\SOUL@tdsetup{%
-	\SOUL@setup
-	\let\SOUL@preamble\SOUL@tdpreamble
-	\let\SOUL@everysyllable\SOUL@tdeverysyllable
-	\let\SOUL@everyhyphen\SOUL@tdeveryhyphen
-	\let\SOUL@everyexhyphen\SOUL@tdeveryexhyphen
-	\let\SOUL@postamble\SOUL@tdpostamble
-}
-
-%====COMMANDES PRINCIPALES
-\DeclareRobustCommand*\SurlignerTexte[1][]{%
-	\csxdef{decor@tikz@style@\thetxtdec@decormark}{#1}%
-	\csxdef{decor@fsize@\thetxtdec@decormark}{\f@size pt}%
-	\SOUL@tdsetup\SOUL@%
-}
-
-\DeclareRobustCommand*\HighlightText[1][]{%
-	\csxdef{decor@tikz@style@\thetxtdec@decormark}{#1}%
-	\csxdef{decor@fsize@\thetxtdec@decormark}{\f@size pt}%
-	\SOUL@tdsetup\SOUL@%
-}
-
-\AtBeginShipout{%
-	\AtBeginShipoutUpperLeft{%
-		% getting the number of the next page
-		\setcounter{txtdec@thenextpage}{\thepage}%
-		\stepcounter{txtdec@thenextpage}%
-		% if the current decoration occurs on this page, stay on it
-		\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
-			\toggletrue{txtdec@stayonpage}}{}%
-		\whileboolexpr{togl {txtdec@stayonpage}}{%
-			\begin{tikzpicture}[remember picture, overlay]
-				\setlength{\txtdec@height}{\csuse{decor@fsize@\thetxtdec@decordraw}}%
-				\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.begin}{%
-					% if current decor begins in current page, get coordinates
-					\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.begin)}{\Xbegin}{\Ybegin}}{%
-					% if current decor begins in previous page, set to top left of the page
-					\gettikzxy{(current page.north west)}{\Xbegin}{\Ybegin}}%
-				\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.end}{%
-					% if current decor ends in current page, get coordinates
-					\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.end)}{\Xend}{\Yend}}{%
-					% if current decor ends in future page, set to bottom right of the page
-					\gettikzxy{(current page.south east)}{\Xend}{\Yend}}%
-				\ifdim\Ybegin=\Yend % the simplest case, a single line
-				\txtdec@draw@all
-				\stepcounter{txtdec@decordraw}%
-				\else % current textdecor has a line break          
-				\toggletrue{txtdec@stayondecor}%
-				\whileboolexpr{togl {txtdec@stayondecor}}{%
-					\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw})}{\Xlinebegin}{\Ylinebegin}%
-					\edef\Xcurrent{\Xlinebegin}%
-					\edef\Ycurrent{\Ylinebegin}%
-					\edef\Xnext{\Xcurrent}%
-					\edef\Ynext{\Ycurrent}%
-					\toggletrue{txtdec@stayonline}%
-					\whileboolexpr{togl {txtdec@stayonline}}{%
-						\ifdim\Ycurrent=\Ynext
-						\stepcounter{txtdec@hyphdraw}%
-						% if the following tikzmark exists, we are at a page break
-						\iftikzmark{p\arabic{txtdec@thenextpage}.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
-							\edef\Xcurrent{\Xnext}%
-							\edef\Ycurrent{\Ynext}%
-							\gettikzxy{(current page.south east)}{\Xnext}{\Ynext}
-							\togglefalse{txtdec@stayondecor}%
-						}{% else, we remain on the same page
-							\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
-								\edef\Xcurrent{\Xnext}%
-								\edef\Ycurrent{\Ynext}%
-								\gettikzxy{(pic cs:p\thepage.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw})}{\Xnext}{\Ynext}}{}%
-						}%
-						\else
-						\edef\Xlineend{\Xcurrent}%
-						\edef\Ylineend{\Ycurrent}%
-						% if we are on the first line of the current decoration
-						\ifdim\Ylinebegin=\Ybegin
-						\txtdec@draw@begin
-						\else
-						% if we are on the last line of the current decoration
-						\ifdim\Ycurrent=\Yend
-						\txtdec@draw@end
-						\stepcounter{txtdec@decordraw}%
-						\setcounter{txtdec@hyphdraw}{1}%
-						\togglefalse{txtdec@stayondecor}%
-						% if we are in a middle line of the decoration
-						\else
-						\txtdec@draw@middle
-						\fi
-						\fi
-						\togglefalse{txtdec@stayonline}%  
-						\fi
-					}%
-				}%
-				\fi
-			\end{tikzpicture}%
-			% if the beginning of the next decor does not exist in this page, leave this page
-			\iftikzmark{p\thepage.d\arabic{txtdec@decordraw}.begin}{}{%
-				\togglefalse{txtdec@stayonpage}}%
-			% if the continuation of the current decor exists in the next page, leave this page
-			\iftikzmark{p\arabic{txtdec@thenextpage}.d\arabic{txtdec@decordraw}.\arabic{txtdec@hyphdraw}}{%
-				\togglefalse{txtdec@stayonpage}}{}% 
-		}%
-	}%
-}
-
 
 \endinput

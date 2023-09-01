@@ -1,6 +1,4 @@
-% !TeX TXS-program:compile = txs:///arara
-% arara: lualatex: {shell: no, synctex: no, interaction: batchmode}
-% arara: lualatex: {shell: no, synctex: no, interaction: batchmode} if found('log', '(undefined references|Please rerun|Rerun to get)')
+% !TeX TXS-program:compile = txs:///lualatex
 
 \documentclass[french,11pt,a4paper]{article}
 %\usepackage[utf8]{inputenc}
@@ -35,8 +33,8 @@
 \hypersetup{pdfborder=0 0 0}
 \usepackage[margin=1.5cm]{geometry}
 \setlength{\parindent}{0pt}
-\def\TPversion{0.1.0}
-\def\TPdate{30 août 2023}
+\def\TPversion{0.1.1}
+\def\TPdate{1\up*{er} septembre 2023}
 \usepackage{tcolorbox}
 \tcbuselibrary{skins,hooks}
 \sethlcolor{lightgray!25}
@@ -58,9 +56,11 @@
 			\begin{tabular}{c}
 				{\Huge \texttt{highlightx}}\\
 				\\
-				{\LARGE Commandes pour surligner formules ou paragraphes,} \\
+				{\LARGE Commandes pour surligner de formules (avec un} \\
 				\\
-				{\LARGE à l'aide des packages \MontreCode{soul} ou  \MontreCode{tikz}.} \\
+				{\LARGE effet main levée), ou des paragraphes, à l'aide} \\
+				\\
+				{\LARGE des packages \MontreCode{soul} et/ou \MontreCode{tikz}.} \\
 				\\
 				{\LARGE $\rhd$ Commandes [fr] ou [en] $\lhd$} \\
 				\\
@@ -105,9 +105,9 @@ Et en mode hors ligne :
 Et on peut même mettre en forme un paragraphe (dans une \MontreCode{tcbox}), généré aléatoirement grâce au site \url{https://ipsum.one/} par exemple : \og \genhighlightpar{Enfin, comme le dernier coup de dix heures retentissait encore, il étendit la main et prit celle de Mme Rênal, qui la retira aussitôt. Julien, sans trop savoir ce qu’il faisait, la saisit de nouveau. Quoique bien ému lui-même, il fut frappé de la froideur glaciale de la main qu’il prenait ; il la serrait avec une force convulsive ; on fit un dernier effort pour la lui ôter, mais enfin cette main lui resta.} \fg
 \end{tcolorbox}
 
-\vspace*{5mm}
-
-Et dans un paragraphe classique, on peut mettre des effets, comme par exemple avec le texte suivant, généré aléatoirement grâce au site \url{https://ipsum.one/} par exemple : \og \SurlignerTexte[orange!25,draw=teal]{Une scie à eau se compose d’un hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie une pièce de bois. C’est une roue mise en mouvement par le ruisseau qui fait aller ce double mécanisme ; celui de la scie qui monte et descend, et celui qui pousse doucement la pièce de bois vers la scie, qui la débite en planches.} \fg
+%\vspace*{5mm}
+%
+%Et dans un paragraphe classique, on peut mettre des effets, comme par exemple avec le texte suivant, généré aléatoirement grâce au site \url{https://ipsum.one/} par exemple : \og \SurlignerTexte[orange!25,draw=teal]{Une scie à eau se compose d’un hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie une pièce de bois. C’est une roue mise en mouvement par le ruisseau qui fait aller ce double mécanisme ; celui de la scie qui monte et descend, et celui qui pousse doucement la pièce de bois vers la scie, qui la débite en planches.} \fg
 
 \vfill~
 
@@ -148,23 +148,25 @@ Et maintenant avec \texttt{fcolorbox} : \colorbox{lightgray!25}{$\int_0^4 x^2\,\
 
 \subsection{Possibilités et limitations}
 
-L'idée du package \MontreCode{highlightx} est de proposer des commandes, simples et basiques, pour \textit{surligner} :
+L'idée du package \MontreCode{highlightx} est de proposer des commandes basiques, pour \textit{surligner} :
 
 \begin{itemize}
 	\item du texte simple ou multi-lignes (paragraphes) ;
-	\item des formules en mode math en ligne ou hors-ligne (grâce à \TikZ) ;
-	\item avec un effet de bordure à \textit{main levée} (sauf pour un paragraphe dans une \MontreCode{tcbox}).
+	\item des formules en mode math en ligne ou hors-ligne (grâce à \TikZ) avec un effet de bordure à \textit{main levée}.
+	%\item avec un effet de bordure à \textit{main levée} (sauf pour un paragraphe dans une \MontreCode{tcbox}).
 \end{itemize}
 
-{\small\faBomb}~Pour le moment le surlignement avec effet en mode paragraphe n'est pas compatible avec des environnements (comme \MontreCode{tcolorbox}), donc dans ce cas il n'y aura pas d'effet possible.
+{\small\faBomb}~En ce qui concerne les paragraphes, le package \MontreCode{soul} est performant dans le cas où la police courante est en \MontreCode{\textbackslash normalsize}, dans le cas contraire, il se peut que le rendu ne soit pas optimal. Il se peut également que le surlignage ne donne pas un résultat optimal avec certains caractères, comme par exemple \MontreCode{;}.
 
-\medskip
-
-{\small\faAngellist}~Le code permettant de surligner un paragraphe avec effet vient d'une solution proposée par l'internaute \MontreCode{gusbrs}, dans un fil de discussion du site \MontreCode{tex.stackexchange} :
-
-\smallskip
-
-\hfill\url{https://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex}\hfill~
+%{\small\faBomb}~Pour le moment le surlignement avec effet en mode paragraphe n'est pas compatible avec des environnements (comme \MontreCode{tcolorbox}), donc dans ce cas il n'y aura pas d'effet possible.
+%
+%\medskip
+%
+%{\small\faAngellist}~Le code permettant de surligner un paragraphe avec effet vient d'une solution proposée par l'internaute \MontreCode{gusbrs}, dans un fil de discussion du site \MontreCode{tex.stackexchange}, et sous licence CC BY-SA :
+%
+%\smallskip
+%
+%\hfill\url{https://tex.stackexchange.com/questions/5959/cool-text-highlighting-in-latex}\hfill~
 
 \subsection{Chargement}
 
@@ -173,9 +175,11 @@ Le package se charge dans le préambule, via \MontreCode{\textbackslash usepacka
 Les seuls packages chargés sont :
 
 \begin{itemize}
-	\item \MontreCode{soul}, \MontreCode{atbegshi}, \MontreCode{etoolbox} ;
-	\item \MontreCode{tikz} avec les librairies \MontreCode{tikzmark,calc,decorations.pathmorphing} ;
-	\item \MontreCode{xstring} et \MontreCode{simplekv}.
+	\item \MontreCode{soul}, \MontreCode{xstring} et \MontreCode{simplekv}.
+	\item \MontreCode{tikz} avec les librairies \MontreCode{tikzmark,calc,decorations.pathmorphing}.
+	%\item \MontreCode{soul}, \MontreCode{atbegshi}, \MontreCode{etoolbox} ;
+	%\item \MontreCode{tikz} avec les librairies \MontreCode{tikzmark,calc,decorations.pathmorphing} ;
+	%\item \MontreCode{xstring} et \MontreCode{simplekv}.
 \end{itemize}
 
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
@@ -184,9 +188,9 @@ Les seuls packages chargés sont :
 
 {\small\faAngleDoubleRight}~\MontreCode{highlightx} est compatible avec les compilations usuelles en \textsf{latex}, \textsf{pdflatex}, \textsf{lualatex} ou \textsf{xelatex}.
 
-\medskip
-
-{\small\faBomb}~Une double compilation est souvent nécessaire afin de placer correctement les effets de surlignage !
+%\medskip
+%
+%{\small\faBomb}~Des erreurs peuvent apparaître lors de la compilation, dans ce cas une nouvelle compilation sera nécessaire afin de placer correctement les effets de surlignage !
 
 \subsection{Commandes disponibles}
 
@@ -196,34 +200,35 @@ Les commandes proposées par le package \MontreCode{highlightx} sont :
 %Commande pour surligner une formule (mode math)
 \SurlignerFormule
 
-%Commande pour surligner du texte
-\SurlignerTexte
-
 %Commande pour surligner du texte de manière basique, sans effet
 \genhighlightpar
 \end{codehigh}
 
-\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-Par exemple $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
-Ou bien :
-\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
+\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+Par exemple une formule en ligne comme $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
 
-Et : \og \SurlignerTexte{Une scie à eau se compose d’un 
+Ou bien encore une formule en mode hors-ligne comme :
+%
+\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
+\end{demohigh}
+
+\begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+Et : \og \genhighlightpar{Une scie à eau se compose d’un 
 hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
 gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
 scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
 une pièce de bois.} \fg.
-\end{codehigh}
+\end{demohigh}
 
-Par exemple $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
-Ou bien :
-\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
-
-Et : \og \SurlignerTexte{Une scie à eau se compose d’un 
-hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
-gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
-scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
-une pièce de bois.} \fg.
+%Par exemple $\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$.\\
+%Ou bien :
+%\[ \SurlignerFormule{A=\begin{pmatrix}1&2\\3&4\end{pmatrix}}. \]
+%
+%Et : \og \SurlignerTexte{Une scie à eau se compose d’un 
+%hangar au bord d’un ruisseau. Le toit est soutenu par une charpente qui porte sur quatre 
+%gros piliers en bois. À huit ou dix pieds d’élévation, au milieu du hangar, on voit une 
+%scie qui monte et descend, tandis qu’un mécanisme fort simple pousse contre cette scie 
+%une pièce de bois.} \fg.
 
 \pagebreak
 
@@ -274,58 +279,83 @@ $\SurlignerFormule[Offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$
 \qquad
 $\SurlignerFormule*[Texte=red]{f(x)=\displaystyle\frac{1}{1+x}}$.\\
 
-\subsection{Surligner du texte, y compris multilignes}
+\bigskip
 
-La commande dédiée à la mise en évidence d'une formule mathématique est \MontreCode{\textbackslash SurlignerTexte} :
-
-\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-%Commande pour surligner du texte
-\SurlignerTexte[options tikz]{texte}
-\end{codehigh}
-
-Concernant cette commande, pour laquelle le fonctionnement (interne) est très différent du mode \textit{math} :
-
-\begin{itemize}
-	\item les options tikz permettent de spécifier la couleur de fond et l'éventuelle couleur de bordure, grâce à \MontreCode{[couleurfond,draw=couleurbord]}.
-\end{itemize}
+Le style \textit{main levée} est fixé par défaut, mais peut être modifié en adaptant le style \TikZ{} suivant :
 
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-%Paragraphes venant du site https://ipsum.one/
-
-Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
-de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
-une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
-infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
-me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
-cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
-
-Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
-du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
-devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
-l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
-toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
-une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+%Style main levée
+\tikzstyle{encadreformule}=[%
+    decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
 \end{codehigh}
 
-Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
-de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
-une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
-infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
-me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
-cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
+\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+\tikzstyle{encadreformule}=[%
+    decorate,decoration={random steps,amplitude=4mm,segment length=10mm}]
 
-\medskip
+$\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$
+\end{codehigh}
 
-Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
-du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
-devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
-l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
-toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
-une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+\tikzstyle{encadreformule}=[decorate,decoration={random steps,amplitude=4mm,segment length=10mm}]
 
-\subsection{Surlignement \og classique \fg, au cas où\ldots}
+$\SurlignerFormule{f(x)=\displaystyle\frac{1}{1+x}}$
 
-Au cas où le surlignement multilignes précédent ne fonctionne pas (dans un environnement spécifique par exemple\ldots), il est possible d'utiliser une commande \textit{générique}, qui utilise uniquement le package \MontreCode{soul} (donc pas d'effet !), qui est \MontreCode{\textbackslash genhighlightpar}.
+\tikzstyle{encadreformule}=[decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
+
+%\subsection{Surligner du texte, y compris multilignes}
+%
+%La commande dédiée à la mise en évidence d'une formule mathématique est \MontreCode{\textbackslash SurlignerTexte} :
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%%Commande pour surligner du texte
+%\SurlignerTexte[options tikz]{texte}
+%\end{codehigh}
+%
+%Concernant cette commande, pour laquelle le fonctionnement (interne) est très différent du mode \textit{math} :
+%
+%\begin{itemize}
+%	\item les options tikz permettent de spécifier la couleur de fond et l'éventuelle couleur de bordure, grâce à \MontreCode{[couleurfond,draw=couleurbord]}.
+%\end{itemize}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%%Paragraphes venant du site https://ipsum.one/
+%
+%Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
+%de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
+%une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
+%infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
+%me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
+%cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
+%
+%Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
+%du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
+%devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
+%l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
+%toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
+%une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+%\end{codehigh}
+%
+%Un premier paragraphe : \og \SurlignerTexte{Quand Julien aperçut les ruines pittoresques 
+%de l’ancienne église de Vergy, il remarqua que depuis l’avant-veille il n’avait pas pensé 
+%une seule fois à Mme de Rênal. L’autre jour en partant, cette femme m’a rappelé la distance 
+%infinie qui nous sépare, elle m’a traité comme le fils d’un ouvrier. Sans doute elle a voulu 
+%me marquer son repentir de m’avoir laissé sa main la veille... Elle est pourtant bien jolie, 
+%cette main ! quel charme ! quelle noblesse dans les regards de cette femme !} \fg.
+%
+%\medskip
+%
+%Un deuxième paragraphe : \og \SurlignerTexte[teal!35,draw=red]{Ce ne fut que dans la nuit 
+%du samedi au dimanche, après trois jours de pourparlers, que l’orgueil de l’abbé Maslon plia 
+%devant la peur du maire qui se changeait en courage. Il fallut écrire une lettre mielleuse à 
+%l’abbé Chélan, pour le prier d’assister à la cérémonie de la relique de Bray-le-Haut, si 
+%toutefois son grand âge et ses infirmités le lui permettaient. M. Chélan demanda et obtint 
+%une lettre d’invitation pour Julien qui devait l’accompagner en qualité de sous-diacre.} \fg.
+
+\pagebreak
+
+\subsection{Surlignement \og classique \fg, d'un texte ou d'un paragraphe}
+
+Pour du surlignement multilignes, il est possible d'utiliser une commande \textit{générique}, qui utilise uniquement le package \MontreCode{soul} (donc pas d'effet !), qui est \MontreCode{\textbackslash genhighlightpar} (qui est basée \textit{basiquement} sur la commande \MontreCode{\textbackslash hl} du package \MontreCode{soul}).
 
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
 %Commande générique pour surligner du texte
@@ -335,12 +365,12 @@ Au cas où le surlignement multilignes précédent ne fonctionne pas (dans un en
 Concernant cette commande, le premier argument (optionnel) est la couleur de fond, et le second argument (obligatoire) est le texte à mettre en évidence.
 
 \begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-Un paragraphe : \og \genhighlightpar[orange!35]{Pour arriver à la considération publique 
-à Verrières, l’essentiel est de ne pas adopter, tout en bâtissant beaucoup de murs, quelque 
-plan apporté d’Italie par ces maçons, qui au printemps traversent les gorges du Jura pour 
-gagner Paris. Une telle innovation vaudrait à l’imprudent bâtisseur une éternelle réputation 
-de mauvaise tête, et il serait à jamais perdu auprès des gens sages et modérés qui distribuent 
-la considération en Franche-Comté.} \fg.
+Un \genhighlightpar{paragraphe} : \og \genhighlightpar[orange!35]{Pour arriver à la 
+considération publique à Verrières, l’essentiel est de ne pas adopter, tout en bâtissant 
+beaucoup de murs, quelque plan apporté d’Italie par ces maçons, qui au printemps 
+traversent les gorges du Jura pour gagner Paris. Une telle innovation vaudrait à 
+l’imprudent bâtisseur une éternelle réputation de mauvaise tête, et il serait à jamais 
+perdu auprès des gens sages et modérés qui distribuent la considération en Franche-Comté.} \fg.
 \end{demohigh}
 
 \pagebreak
@@ -354,9 +384,6 @@ There's also english versions of the commands :
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
 %Hightlight formula (math mode)
 \HighlightFormula
-
-%Highlight text
-\HighlightText
 
 %Basic highlight text, without effect
 \genhighlightpar
@@ -390,50 +417,69 @@ $\HighlightFormula[offset=5mm/2mm]{f(x)=\displaystyle\frac{1}{1+x}}$
 \qquad
 $\HighlightFormula*[text=red]{f(x)=\displaystyle\frac{1}{1+x}}$.
 
-\subsection{Highlight text}
-
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-%Highlight text, with effect
-\HighlightText[tikz options]{text}
+%handwriting style
+\tikzstyle{borderformula}=[%
+    decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
 \end{codehigh}
 
 \begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-%Paragraphs from https://ipsum.one/
+\tikzstyle{borderformula}=[%
+    decorate,decoration={random steps,amplitude=4mm,segment length=10mm}]
 
-A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
-on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
-the valves open, the steam from the boilers rushes along the conducting tubes into the two 
-cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
-If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
-with one finge}.
-
-A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
-my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
-the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin; 
-an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
-making expeditions from one end to the other, knocking the tables and chairs with loud crashes; 
-doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood;
-bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
-about on the pantry floors}.
+$\HighlightFormula{f(x)=\displaystyle\frac{1}{1+x}}$
 \end{codehigh}
 
-A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
-on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
-the valves open, the steam from the boilers rushes along the conducting tubes into the two 
-cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
-If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
-with one finge}.
+\tikzstyle{borderformula}=[decorate,decoration={random steps,amplitude=4mm,segment length=10mm}]
 
-\medskip
+$\HighlightFormula{f(x)=\displaystyle\frac{1}{1+x}}$
 
-A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
-my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
-the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin ;
-an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
-making expeditions from one end to the other, knocking the tables and chairs with loud crashes ;
-doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood ;
-bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
-about on the pantry floors}.
+\tikzstyle{borderformula}=[decorate,decoration={random steps,amplitude=0.5pt,segment length=1em}]
+
+%\subsection{Highlight text}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%%Highlight text, with effect
+%\HighlightText[tikz options]{text}
+%\end{codehigh}
+%
+%\begin{codehigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
+%%Paragraphs from https://ipsum.one/
+%
+%A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
+%on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
+%the valves open, the steam from the boilers rushes along the conducting tubes into the two 
+%cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
+%If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
+%with one finge}.
+%
+%A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
+%my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
+%the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin; 
+%an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
+%making expeditions from one end to the other, knocking the tables and chairs with loud crashes; 
+%doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood;
+%bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
+%about on the pantry floors}.
+%\end{codehigh}
+%
+%A first one : \HighlightText{In order to modify it, he has only to press his hand lightly 
+%on a small wheel, measuring hardly a foot in diameter, and placed within his reach. Immediately 
+%the valves open, the steam from the boilers rushes along the conducting tubes into the two 
+%cylinders of the small engine, the pistons move rapidly, and the rudder instantly obeys. 
+%If this plan succeeds, a man will be able to direct the gigantic body of the 'Great Eastern' 
+%with one finge}.
+%
+%\medskip
+%
+%A second one : \HighlightText[teal!35,draw=red]{On Wednesday night the weather was very bad, 
+%my balance was strangely variable, and I was obliged to lean with my knees and elbows against 
+%the sideboard, to prevent myself from falling. Portmanteaus and bags came in and out of my cabin ;
+%an unusual hubbub reigned in the adjoining saloon, in which two or three hundred packages were 
+%making expeditions from one end to the other, knocking the tables and chairs with loud crashes ;
+%doors slammed, the boards creaked, the partitions made that groaning noise peculiar to pine wood ;
+%bottles and glasses jingled together in their racks, and a cataract of plates and dishes rolled 
+%about on the pantry floors}.
 
 \subsection{Generic highlight, without effect}
 
@@ -443,7 +489,7 @@ about on the pantry floors}.
 \end{codehigh}
 
 \begin{demohigh}[language=latex/latex2,style/main=cyan!10,style/code=cyan!10]
-Un paragraph : \genhighlightpar[violet!35]{This steam-ship is indeed a masterpiece of naval 
+A paragraph : \genhighlightpar[violet!35]{This steam-ship is indeed a masterpiece of naval 
 construction ; more than a vessel, it is a floating city, part of the country, detached from 
 English soil, which after having crossed the sea, unites itself to the American Continent.
 I pictured to myself this enormous bulk borne on the waves, her defiant struggle with the wind, 
