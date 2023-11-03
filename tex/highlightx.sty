@@ -1,12 +1,21 @@
 % Author     : C. Pierquet
+% Source     : Antal Spector-Zabusky
 % licence    : Released under the LaTeX Project Public License v1.3c or later, see http://www.latex-project.org/lppl.txtf
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{highlightx}[2023/09/01 0.1.1 Macros pour surligner du texte, meme en mode paragraphe]
+\ProvidesPackage{highlightx}[2023/11/03 0.1.3 Macros pour surligner du texte, meme en mode paragraphe]
 
 %====HISTORIQUE
+% v 0.1.3	Correction d'un bug avec le caractère ; (merci à Denis B.)
+% v 0.1.2	Version étoilée pour \genhighlightpar afin d'activer \NoAutoSpacing + retour du code paragraphe main levée
 % v 0.1.1	Suppression code paragraphe avec effet
 % v 0.1.0	Version initiale [fr] et [en]
+
+%====OPTION babel
+\newif\if@babel\@babeltrue
+\DeclareOption{nobabel}{\@babelfalse}
+\DeclareOption*{}
+\ProcessOptions\relax
 
 %====BASE
 \RequirePackage{soul}
@@ -14,6 +23,9 @@
 \RequirePackage{xstring}
 \RequirePackage{simplekv}
 \usetikzlibrary{tikzmark,calc,decorations.pathmorphing}
+\if@babel
+	\usetikzlibrary{babel}
+\fi
 \colorlet{hlcolback}{yellow!35}
 
 %====COMMANDES POUR FORMULES
@@ -91,8 +103,216 @@
 }
 
 %====COMMANDES POUR PARAGRAPHES SIMPLES (sans effet, pour du tcbox par exemple)
-\NewDocumentCommand\genhighlightpar{ O{hlcolback} m }{%
-	{\sethlcolor{#1}\hl{#2}}%
+\NewDocumentCommand\genhighlightpar{ s O{hlcolback} m }{%
+	\IfBooleanTF{#1}%
+		{\sethlcolor{#2}\NoAutoSpacing\hl{#3}}%
+		{\sethlcolor{#2}\hl{#3}}%
+}
+
+%====COMMANDES POUR PARAGRAPHES avec effet, code de base de Antal Spector-Zabusky :-)
+\def\surlignparbg{yellow}
+\def\surlignparopac{0.25}
+\newlength{\tmp@hauteur@char}
+\newlength{\tmp@profondeur@char}
+\newdimen\highlight@previous
+\newdimen\highlight@current
+
+\defKV[surligpar]{%
+	Fond=\def\surlignparbg{#1},%
+	Bord=\def\surlignparborder{#1},%
+	Offset=\def\surlignparoffset{#1},%
+	Opacite=\def\surlignparopac{#1}
+}
+
+\setKVdefault[surligpar]{%
+	Fond=yellow,%
+	Bord=none,%
+	Offset=1pt,%
+	Opacite=0.25
+}
+
+\defKV[hlightpar]{%
+	bg=\def\surlignparbg{#1},%
+	border=\def\surlignparborder{#1},%
+	offset=\def\surlignparoffset{#1},%
+	opacity=\def\surlignparopac{#1}
+}
+
+\setKVdefault[hlightpar]{%
+	bg=yellow,%
+	border=none,%
+	offset=1pt,%
+	opacity=0.25
+}
+
+\newcommand{\highlight@DoHighlight}{
+	\fill[hlparhw] ($(begin highlight)+(-\surlignparoffsetH,1.05*\tmp@hauteur@char+\surlignparoffsetV)$) rectangle ($(end highlight)+(\surlignparoffsetH,-1.05*\tmp@profondeur@char-\surlignparoffsetV)$)
+}
+
+\newcommand{\highlight@BeginHighlight}{
+	\coordinate (begin highlight) at (0,0) 
+}
+
+\newcommand{\highlight@EndHighlight}{
+	\coordinate (end highlight) at (0,0) 
+}
+
+\NewDocumentCommand\SurlignerTexte{ s O{} D<>{} }{%
+	%étoilée = supprimer effet bordure
+	%1 = clés simplekv
+	%2 = options tikz
+	\useKVdefault[surligpar]%
+	\setKV[surligpar]{#2}%
+	\IfBooleanTF{#1}%
+		{%
+			\tikzset{hlparhw/.style={outer sep=-15pt, inner sep=0pt,every highlighter,this highlighter}}%
+		}%
+		{%
+			\tikzset{hlparhw/.style={encadreformule,outer sep=-15pt,inner sep=0pt,every highlighter,this highlighter}}%
+		}%
+	\IfSubStr{\surlignparoffset}{/}%
+		{%
+			\StrCut{\surlignparoffset}{/}{\surlignparoffsetH}{\surlignparoffsetV}%
+		}%
+		{%
+			\def\surlignparoffsetH{\surlignparoffset}\def\surlignparoffsetV{\surlignparoffset}%
+		}%
+	\tikzset{every highlighter/.style={color=\surlignparbg,fill opacity=\surlignparopac,draw=\surlignparborder,#3}}%
+	\settoheight{\tmp@hauteur@char}{\hbox{B}}%
+	\settodepth{\tmp@profondeur@char}{\hbox{q}}%
+	\tikzset{this highlighter/.style={#3}}%
+	\SOUL@setup
+	%
+	\def\SOUL@preamble{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\highlight@BeginHighlight ;
+			\highlight@EndHighlight ;
+		\end{tikzpicture}%
+	}%
+	%
+	\def\SOUL@postamble{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\highlight@EndHighlight ;
+			\highlight@DoHighlight ;
+		\end{tikzpicture}%
+	}%
+	%
+	\def\SOUL@everyhyphen{%
+		\discretionary{%
+			\SOUL@setkern\SOUL@hyphkern
+			\SOUL@sethyphenchar
+			{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+		}{%
+		}{%
+			\SOUL@setkern\SOUL@charkern
+		}%
+	}%
+	%
+	\def\SOUL@everyexhyphen##1{%
+		\SOUL@setkern\SOUL@hyphkern
+		\hbox{##1}%
+		\discretionary{%
+			{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+		}{%
+		}{%
+			\SOUL@setkern\SOUL@charkern
+		}%
+	}%
+	%
+	\def\SOUL@everysyllable{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\path let \p0 = (begin highlight), \p1 = (0,0) in \pgfextra
+			\global\highlight@previous=\y0
+			\global\highlight@current =\y1
+			\endpgfextra (0,0) ;
+			\ifdim\highlight@current < \highlight@previous
+			\highlight@DoHighlight ; 
+			\highlight@BeginHighlight ;
+			\fi
+		\end{tikzpicture}%
+		\the\SOUL@syllable
+		{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+	}%
+	\SOUL@
+}
+
+\NewDocumentCommand\HighlightText{ s O{} D<>{} }{%
+	%étoilée = supprimer effet bordure
+	%1 = clés simplekv
+	%2 = options tikz
+	\useKVdefault[hlightpar]%
+	\setKV[hlightpar]{#2}%
+	\IfBooleanTF{#1}%
+		{%
+			\tikzset{hlparhw/.style={outer sep=-15pt, inner sep=0pt,every highlighter,this highlighter}}%
+		}%
+		{%
+			\tikzset{hlparhw/.style={borderformula,outer sep=-15pt,inner sep=0pt,every highlighter,this highlighter}}%
+		}%
+	\IfSubStr{\surlignparoffset}{/}%
+		{%
+			\StrCut{\surlignparoffset}{/}{\surlignparoffsetH}{\surlignparoffsetV}%
+		}%
+		{%
+			\def\surlignparoffsetH{\surlignparoffset}\def\surlignparoffsetV{\surlignparoffset}%
+		}%
+	\tikzset{every highlighter/.style={color=\surlignparbg,fill opacity=\surlignparopac,draw=\surlignparborder,#3}}%
+	\settoheight{\tmp@hauteur@char}{\hbox{B}}%
+	\settodepth{\tmp@profondeur@char}{\hbox{q}}%
+	\tikzset{this highlighter/.style={#3}}%
+	\SOUL@setup
+	%
+	\def\SOUL@preamble{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\highlight@BeginHighlight ;
+			\highlight@EndHighlight ;
+		\end{tikzpicture}%
+	}%
+	%
+	\def\SOUL@postamble{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\highlight@EndHighlight ;
+			\highlight@DoHighlight ;
+		\end{tikzpicture}%
+	}%
+	%
+	\def\SOUL@everyhyphen{%
+		\discretionary{%
+			\SOUL@setkern\SOUL@hyphkern
+			\SOUL@sethyphenchar
+			{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+		}{%
+		}{%
+			\SOUL@setkern\SOUL@charkern
+		}%
+	}%
+	%
+	\def\SOUL@everyexhyphen##1{%
+		\SOUL@setkern\SOUL@hyphkern
+		\hbox{##1}%
+		\discretionary{%
+			{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+		}{%
+		}{%
+			\SOUL@setkern\SOUL@charkern
+		}%
+	}%
+	%
+	\def\SOUL@everysyllable{%
+		\begin{tikzpicture}[overlay, remember picture]
+			\path let \p0 = (begin highlight), \p1 = (0,0) in \pgfextra
+			\global\highlight@previous=\y0
+			\global\highlight@current =\y1
+			\endpgfextra (0,0) ;
+			\ifdim\highlight@current < \highlight@previous
+			\highlight@DoHighlight ;
+			\highlight@BeginHighlight ;
+			\fi
+		\end{tikzpicture}%
+		\the\SOUL@syllable
+		{\tikz[overlay, remember picture] \highlight@EndHighlight ;}%
+	}%
+	\SOUL@
 }
 
 \endinput
